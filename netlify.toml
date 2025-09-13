@@ -1,6 +1,6 @@
 [build]
   publish = "page"
 
-[[edge_functions]]
-  path = "/providers/mingyue"
-  function = "mingyue-proxy"
+# [[edge_functions]]
+#   path = "/providers/mingyue"
+#   function = "mingyue-proxy"
