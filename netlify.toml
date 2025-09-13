@@ -1,8 +1,0 @@
-# Netlify config for MingYue gateway (Route B)
-[build]
-  publish = "pages"
-
-# Map Edge Function to proxy the upstream subscription
-[[edge_functions]]
-  path = "/providers/mingyue"
-  function = "mingyue-proxy"
