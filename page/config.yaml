@@ -2,7 +2,7 @@
 
 proxy-providers:
   MingYue:
-    url: "https://m.pyden.dev/providers/mingyue"
+    url: "https://sub.pyden.dev/share/col/MingYue?token=fJscGGMVgnQtSscfZrFazUjxuVjlxmbKQEfQIGKZXKYKHMDpxYEksEPBwJkMGTkcpllIBmyFYfAOoczuFOlXRATNBMJwSFiYfPfg&target=ClashMeta"
     type: http
     interval: 18000
     path: ./providers/MingYue.yaml
