@@ -1,0 +1,442 @@
+# 鸣约公益节点
+
+proxy-providers:
+  MingYue:
+    url: "https://sub.pyden.dev/share/col/MingYue?token=fJscGGMVgnQtSscfZrFazUjxuVjlxmbKQEfQIGKZXKYKHMDpxYEksEPBwJkMGTkcpllIBmyFYfAOoczuFOlXRATNBMJwSFiYfPfg&target=ClashMeta"
+    type: http
+    interval: 18000
+    path: ./providers/MingYue.yaml
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+    proxy: 直连
+
+# 节点信息
+proxies:
+  - { name: 直连, type: direct }
+  - { name: "📣 QQ群：176022692", type: direct }
+  - { name: "📣 电报：@Daygl", type: direct }
+
+# 全局配置（沿用模板，可按需调整）
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7894
+allow-lan: true
+bind-address: "*"
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+log-level: warning
+find-process-mode: "off"
+global-client-fingerprint: chrome
+keep-alive-idle: 600
+keep-alive-interval: 15
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+# 嗅探（沿用模板）
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  force-domain:
+    - "+.v2ex.com"
+  skip-domain:
+    - "+.baidu.com"
+
+# 入站（沿用模板）
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: false
+  auto-redirect: false
+  auto-detect-interface: false
+
+# DNS（沿用模板）
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 28.0.0.1/8
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "geosite:private"
+    - "geosite:cn"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+    - "time.*.com"
+    - "+.market.xiaomi.com"
+  default-nameserver:
+    - 223.5.5.5
+  proxy-server-nameserver:
+    - https://223.5.5.5/dns-query
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+# 策略组（按 my.ini 迁移，并支持隐藏子分组）
+proxy-groups:
+  # 总控分组
+  - {
+      name: "节点选择",
+      type: select,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
+      proxies:
+        [
+          "📣 QQ群：176022692",
+          "📣 电报：@Daygl",
+          "🔰 稳连优选",
+          "⚡ 自动选择",
+          "香港",
+          "日本",
+          "新加坡",
+          "韩国",
+          "美国",
+          "台湾",
+          "其他地区",
+        ],
+    }
+
+  # 稳定优选（fallback）
+  - name: "🔰 稳连优选"
+    type: fallback
+    include-all: true
+    url: "https://www.gstatic.com/generate_204"
+    interval: 180
+    tolerance: 30
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Fallback.png"
+    filter: "(香港|HK|Hong Kong|HongKong|日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan|新加坡|坡|狮城|SG|Singapore|美|US|United States|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|台湾|TW|Taiwan|韩国|KR|Korea|英国|UK|United Kingdom|德国|DE|Germany|法国|FR|France|荷兰|NL|Netherlands|加拿大|CA|Canada|澳大利亚|AU|Australia|马来西亚|MY|Malaysia|印尼|印度尼西亚|ID|Indonesia|泰国|TH|Thailand|越南|VN|Vietnam|菲律宾|PH|Philippines|西班牙|ES|Spain|意大利|IT|Italy|俄罗斯|RU|Russia|土耳其|TR|Turkey|阿联酋|UAE|AE|巴西|BR|Brazil|墨西哥|MX|Mexico)"
+    hidden: true
+  # 手动/自动
+  - { name: "✋ 手动切换", type: select, include-all: true, icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hand.png", hidden: true }
+  - {
+      name: "⚡ 自动选择",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(香港|HK|Hong Kong|HongKong|日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan|新加坡|坡|狮城|SG|Singapore|美|US|United States|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|台湾|TW|Taiwan|韩国|KR|Korea|英国|UK|United Kingdom|德国|DE|Germany|法国|FR|France|荷兰|NL|Netherlands|加拿大|CA|Canada|澳大利亚|AU|Australia|马来西亚|MY|Malaysia|印尼|印度尼西亚|ID|Indonesia|泰国|TH|Thailand|越南|VN|Vietnam|菲律宾|PH|Philippines|西班牙|ES|Spain|意大利|IT|Italy|俄罗斯|RU|Russia|土耳其|TR|Turkey|阿联酋|UAE|AE|巴西|BR|Brazil|墨西哥|MX|Mexico)",
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png",
+      hidden: true
+    }
+
+  # 地区分组（可见）
+  - {
+      name: "香港",
+      type: select,
+      proxies: ["⚡ 香港自动", "🔰 香港稳连", "🔄 香港均衡"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/HK.png",
+      filter: "(香港|HK|Hong Kong|HongKong)",
+    }
+  - {
+      name: "日本",
+      type: select,
+      proxies: ["⚡ 日本自动", "🔰 日本稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/JP.png",
+      filter: "(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan)",
+    }
+  - {
+      name: "新加坡",
+      type: select,
+      proxies: ["⚡ 新加坡自动", "🔰 新加坡稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/SG.png",
+      filter: "(新加坡|坡|狮城|SG|Singapore)",
+    }
+  - {
+      name: "韩国",
+      type: select,
+      proxies: ["⚡ 韩国自动", "🔰 韩国稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/KR.png",
+      filter: "(韩国|KR|Korea|South Korea|首尔|釜山)",
+    }
+  - {
+      name: "美国",
+      type: select,
+      proxies: ["⚡ 美国自动", "🔰 美国稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/US.png",
+      filter: "(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States)",
+    }
+  - {
+      name: "台湾",
+      type: select,
+      proxies: ["⚡ 台湾自动", "🔰 台湾稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TW.png",
+      filter: "(台湾|TW|Taiwan|台北|台中|高雄)",
+    }
+  - {
+      name: "其他地区",
+      type: select,
+      proxies: ["⚡ 其他地区自动", "🔰 其他地区稳连"],
+      include-all: true,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
+      filter: "(英国|UK|United Kingdom|伦敦|德国|DE|Germany|法兰克福|慕尼黑|法国|FR|France|巴黎|荷兰|NL|Netherlands|阿姆斯特丹|加拿大|CA|Canada|多伦多|温哥华|蒙特利尔|澳大利亚|澳洲|AU|Australia|悉尼|墨尔本|马来西亚|MY|Malaysia|吉隆坡|印度尼西亚|印尼|ID|Indonesia|雅加达|泰国|TH|Thailand|曼谷|越南|VN|Vietnam|河内|胡志明|菲律宾|PH|Philippines|马尼拉|西班牙|ES|Spain|马德里|巴塞罗那|意大利|IT|Italy|米兰|罗马|俄罗斯|RU|Russia|莫斯科|圣彼得堡|土耳其|TR|Turkey|伊斯坦布尔|阿联酋|UAE|AE|United Arab Emirates|迪拜|巴西|BR|Brazil|圣保罗|里约|墨西哥|MX|Mexico|墨西哥城)",
+    }
+
+  # 地区子分组（隐藏）
+  - {
+      name: "⚡ 香港自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(香港|HK|Hong Kong|HongKong)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 香港稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(香港|HK|Hong Kong|HongKong)",
+      hidden: true,
+    }
+  - {
+      name: "🔄 香港均衡",
+      type: load-balance,
+      include-all: true,
+      strategy: consistent-hashing,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      filter: "(香港|HK|Hong Kong|HongKong)",
+      hidden: true,
+    }
+
+  - {
+      name: "⚡ 日本自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 日本稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan)",
+      hidden: true,
+    }
+
+  - {
+      name: "⚡ 新加坡自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(新加坡|坡|狮城|SG|Singapore)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 新加坡稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(新加坡|坡|狮城|SG|Singapore)",
+      hidden: true,
+    }
+
+  - {
+      name: "⚡ 韩国自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(韩国|KR|Korea|South Korea|首尔|釜山)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 韩国稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(韩国|KR|Korea|South Korea|首尔|釜山)",
+      hidden: true,
+    }
+
+  - {
+      name: "⚡ 美国自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 美国稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States)",
+      hidden: true,
+    }
+
+  - {
+      name: "⚡ 台湾自动",
+      type: url-test,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(台湾|TW|Taiwan|台北|台中|高雄)",
+      hidden: true,
+    }
+  - {
+      name: "🔰 台湾稳连",
+      type: fallback,
+      include-all: true,
+      url: "https://www.gstatic.com/generate_204",
+      interval: 180,
+      tolerance: 30,
+      filter: "(台湾|TW|Taiwan|台北|台中|高雄)",
+      hidden: true,
+    }
+
+  - name: "⚡ 其他地区自动"
+    type: url-test
+    include-all: true
+    url: "https://www.gstatic.com/generate_204"
+    interval: 180
+    tolerance: 30
+    filter: "(英国|UK|United Kingdom|伦敦|德国|DE|Germany|法兰克福|慕尼黑|法国|FR|France|巴黎|荷兰|NL|Netherlands|阿姆斯特丹|加拿大|CA|Canada|多伦多|温哥华|蒙特利尔|澳大利亚|澳洲|AU|Australia|悉尼|墨尔本|马来西亚|MY|Malaysia|吉隆坡|印度尼西亚|印尼|ID|Indonesia|雅加达|泰国|TH|Thailand|曼谷|越南|VN|Vietnam|河内|胡志明|菲律宾|PH|Philippines|马尼拉|西班牙|ES|Spain|马德里|巴塞罗那|意大利|IT|Italy|米兰|罗马|俄罗斯|RU|Russia|莫斯科|圣彼得堡|土耳其|TR|Turkey|伊斯坦布尔|阿联酋|UAE|AE|United Arab Emirates|迪拜|巴西|BR|Brazil|圣保罗|里约|墨西哥|MX|Mexico|墨西哥城)"
+    hidden: true
+  - name: "🔰 其他地区稳连"
+    type: fallback
+    include-all: true
+    url: "https://www.gstatic.com/generate_204"
+    interval: 180
+    tolerance: 30
+    filter: "(英国|UK|United Kingdom|伦敦|德国|DE|Germany|法兰克福|慕尼黑|法国|FR|France|巴黎|荷兰|NL|Netherlands|阿姆斯特丹|加拿大|CA|Canada|多伦多|温哥华|蒙特利尔|澳大利亚|澳洲|AU|Australia|悉尼|墨尔本|马来西亚|MY|Malaysia|吉隆坡|印度尼西亚|印尼|ID|Indonesia|雅加达|泰国|TH|Thailand|曼谷|越南|VN|Vietnam|河内|胡志明|菲律宾|PH|Philippines|马尼拉|西班牙|ES|Spain|马德里|巴塞罗那|意大利|IT|Italy|米兰|罗马|俄罗斯|RU|Russia|莫斯科|圣彼得堡|土耳其|TR|Turkey|伊斯坦布尔|阿联酋|UAE|AE|United Arab Emirates|迪拜|巴西|BR|Brazil|圣保罗|里约|墨西哥|MX|Mexico|墨西哥城)"
+    hidden: true
+
+  # 直连/直连策略组
+  - {
+      name: "全球直连",
+      type: select,
+      proxies: ["直连", "节点选择", "✋ 手动切换"],
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
+    }
+
+  # 漏网之鱼（兜底）
+  - {
+      name: "漏网之鱼",
+      type: select,
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
+      proxies:
+        [
+          "节点选择",
+          "🔰 稳连优选",
+          "✋ 手动切换",
+          "⚡ 自动选择",
+          "香港",
+          "日本",
+          "新加坡",
+          "韩国",
+          "美国",
+          "台湾",
+          "其他地区",
+          "直连",
+        ],
+    }
+
+# 规则匹配（仅使用模板内的 rule-providers，按 my.ini 逻辑编排）
+rules:
+  # 自定义强制代理（在 FINAL 前），按需保留
+  - DOMAIN,m.pyden.dev,节点选择
+  - DOMAIN,sub.pyden.dev,节点选择
+  - DOMAIN-SUFFIX,jsdelivr.net,节点选择
+  - DOMAIN-SUFFIX,fastly.jsdelivr.net,节点选择
+  # 如果你完全不需要 GitHub，可不加以下几行（此处已移除）
+
+  # 直连优先
+  - RULE-SET,private_ip,全球直连
+  - RULE-SET,private_domain,全球直连
+
+  # 国外走节点（proxylite ≈ GFW 列表）
+  - RULE-SET,proxylite,节点选择
+
+  # 国内直连
+  - RULE-SET,cn_domain,全球直连
+  - RULE-SET,cn_ip,全球直连
+
+  # 兜底
+  - RULE-SET,geolocation-!cn,节点选择
+  - MATCH,漏网之鱼
+
+# 规则集
+rule-providers:
+  private_domain:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"
+  proxylite:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: "https://raw.githubusercontent.com/qichiyuhub/rule/main/proxy.list"
+  geolocation-!cn:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"
+  cn_domain:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"
+  private_ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"
+  cn_ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"
